@@ -11,14 +11,21 @@ intents = discord.Intents.default()
 intents.message_content = True
 client = discord.Client(intents=intents)
 
+async def clear_bot_messages(channel):
+    async for message in channel.history(limit=100):
+        if message.author == client.user:
+            await message.delete()
+
 async def send_poll():
     channel = client.get_channel(CHANNEL_ID)
+    await clear_bot_messages(channel)
     msg = await channel.send("Wie is er vandaag?")
     await msg.add_reaction("✅")
     await msg.add_reaction("❌")
 
 async def send_porto():
     channel = client.get_channel(PORTO_CHANNEL_ID)
+    await clear_bot_messages(channel)
     number = random.randint(100, 999)
     await channel.send(f"`De porto is: {number}`")
 
@@ -54,7 +61,9 @@ async def on_message(message):
 
     if message.content == "?rnd":
         if message.channel.id == PORTO_CHANNEL_ID:
+            await message.delete()
             number = random.randint(100, 999)
+            await clear_bot_messages(message.channel)
             await message.channel.send(f"`De porto is: {number}`")
         else:
             await message.channel.send(f"Gebruik <#1484101442808578148>!")
