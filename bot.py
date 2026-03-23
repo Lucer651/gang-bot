@@ -17,6 +17,11 @@ async def send_poll():
     await msg.add_reaction("✅")
     await msg.add_reaction("❌")
 
+async def send_porto():
+    channel = client.get_channel(PORTO_CHANNEL_ID)
+    number = random.randint(100, 999)
+    await channel.send(f"`De porto is: {number}`")
+
 async def daily_message():
     await client.wait_until_ready()
 
@@ -32,6 +37,7 @@ async def daily_message():
         await asyncio.sleep(wait_seconds)
 
         await send_poll()
+        await send_porto()
 
 @client.event
 async def on_ready():
